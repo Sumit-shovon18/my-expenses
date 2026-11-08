@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>আমার খরচ · My Expenses</title>
+<meta name="theme-color" content="#0E3B36">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="আমার খরচ">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDF2F0;--card:#fff;--ink:#14201E;--mut:#6B7B77;--line:#DCE5E2;--hero:#0E3B36;--acc:#E8553D;--chip:#E3ECE9;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C1514;--card:#142220;--ink:#E8F0EE;--mut:#8FA39E;--line:#233633;--hero:#0A2C28;--chip:#1D312E}}
+:root[data-theme="dark"]{--bg:#0C1514;--card:#142220;--ink:#E8F0EE;--mut:#8FA39E;--line:#233633;--hero:#0A2C28;--chip:#1D312E}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hind Siliguri","Noto Sans Bengali","Segoe UI",system-ui,sans-serif;line-height:1.5}
+button{font-family:inherit}
+.wrap{max-width:600px;margin:0 auto;padding:16px 16px 100px 82px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.top h1{font-size:19px;margin:0;font-weight:700}
+.top small{display:block;color:var(--mut);font-size:12.5px;font-weight:400}
+.mn{display:flex;align-items:center;background:var(--card);border-radius:99px;padding:2px;border:1px solid var(--line)}
+.mn button{border:0;background:none;color:var(--ink);width:34px;height:34px;border-radius:50%;font-size:18px;cursor:pointer}
+.mn span{min-width:96px;text-align:center;font-weight:600;font-size:14px}
+.hero{background:var(--hero);color:#F2F7F5;border-radius:28px;padding:22px;display:flex;align-items:center;gap:18px}
+.ring{position:relative;width:124px;height:124px;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:23px;line-height:1.1}
+.ring small{font-size:11px;font-weight:400;opacity:.7}
+.hl{flex:1;min-width:0}
+.hl .lb{font-size:13px;opacity:.75}
+.hl .big{font-size:30px;font-weight:700;line-height:1.2;margin:0 0 6px}
+.hl .row{display:flex;justify-content:space-between;font-size:13px;gap:8px;flex-wrap:wrap}
+.hl button{margin-top:10px;border:1px solid rgba(255,255,255,.35);background:none;color:inherit;border-radius:99px;padding:3px 12px;font-size:12px;cursor:pointer}
+.sec{margin-top:22px}
+.sec h2{font-size:15px;margin:0 0 10px;font-weight:600}
+.cats,.box{background:var(--card);border-radius:22px;padding:6px 16px;border:1px solid var(--line)}
+.box{padding:16px;margin-bottom:12px}
+.box h3{margin:0 0 10px;font-size:14px;color:var(--mut);font-weight:600}
+.cr{display:flex;align-items:center;gap:12px;padding:10px 0}
+.cr+.cr{border-top:1px solid var(--line)}
+.ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:19px;flex:none}
+.cm{flex:1;min-width:0}
+.cm .n{display:flex;justify-content:space-between;font-size:14px;font-weight:500}
+.bar{height:6px;border-radius:9px;background:var(--chip);margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:9px}
+.day{font-size:12.5px;color:var(--mut);margin:16px 4px 6px;display:flex;justify-content:space-between}
+.it{background:var(--card);border-radius:18px;padding:10px 12px;display:flex;align-items:center;gap:12px;border:1px solid var(--line);margin-bottom:8px}
+.it .t{flex:1;min-width:0}
+.it .t div:first-child{font-size:14.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis}
+.it .t div:last-child{font-size:12px;color:var(--mut)}
+.it .a{font-weight:600;font-size:15px}
+.it .x{border:0;background:none;color:var(--mut);font-size:20px;cursor:pointer;padding:4px 6px}
+.empty{text-align:center;color:var(--mut);padding:28px 10px;background:var(--card);border-radius:22px;border:1px dashed var(--line);font-size:14px}
+.fab{position:fixed;right:max(16px,calc(50% - 284px));bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--acc);color:#fff;border:0;border-radius:99px;padding:13px 22px;font-weight:600;font-size:16px;box-shadow:0 8px 24px rgba(232,85,61,.4);cursor:pointer;z-index:5}
+.nav{position:fixed;left:0;top:0;bottom:0;width:66px;background:var(--card);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:calc(14px + env(safe-area-inset-top,0px)) 3px 14px;z-index:6}
+.nav div{display:flex;flex-direction:column;gap:8px;width:100%}
+.nav button{flex:none;border:0;background:none;color:var(--mut);padding:8px 2px;border-radius:14px;font-size:10.5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;word-break:break-word;text-align:center}
+.nav button span{font-size:21px}
+.nav button.on{color:var(--acc);font-weight:600;background:var(--chip)}
+.ov{position:fixed;inset:0;background:rgba(5,15,13,.55);display:none;align-items:flex-end;justify-content:center;z-index:20}
+.ov.on{display:flex}
+.sh{background:var(--card);width:100%;max-width:520px;border-radius:28px 28px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px));animation:up .22s ease-out;max-height:92vh;overflow:auto}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.sh{animation:none}}
+.sh h3{margin:0 0 14px;font-size:18px}
+.amt{display:flex;align-items:center;gap:6px;font-size:36px;font-weight:700;border-bottom:2px solid var(--line);padding-bottom:6px;margin-bottom:14px}
+.amt input{border:0;background:none;color:var(--ink);font:inherit;width:100%;outline:none;min-width:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{border:1.5px solid transparent;background:var(--chip);color:var(--ink);border-radius:99px;padding:6px 12px;font-size:13.5px;cursor:pointer}
+.chip.on{border-color:var(--acc);background:var(--card);font-weight:600}
+.f{width:100%;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:11px 12px;font:inherit;font-size:15px;margin-bottom:10px}
+.btn{width:100%;border:0;background:var(--hero);color:#fff;border-radius:16px;padding:13px;font-weight:600;font-size:16px;cursor:pointer;margin-top:4px}
+.btn.g{background:none;color:var(--mut);margin-top:0}
+.btn.d{background:none;color:var(--acc);border:1px solid var(--acc);font-size:14px;padding:10px;margin-top:8px}
+.btn.r{background:var(--acc)}
+.err{color:var(--acc);font-size:13px;min-height:20px}
+.ok{color:#2E9E73}
+.seg{display:flex;background:var(--chip);border-radius:14px;padding:3px}
+.seg button{flex:1;border:0;background:none;padding:8px;border-radius:11px;font-size:14px;color:var(--ink);cursor:pointer}
+.seg button.on{background:var(--card);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.auth{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 16px}
+.au{width:100%;max-width:400px}
+.logo{width:64px;height:64px;border-radius:20px;background:var(--hero);display:grid;place-items:center;font-size:32px;margin:0 auto 10px}
+.au h1{text-align:center;margin:0;font-size:26px}
+.au p.s{text-align:center;color:var(--mut);margin:2px 0 18px;font-size:14px}
+.au .box{padding:18px}
+.au .lang{align-self:flex-end;width:160px;margin-bottom:14px}
+.nt{font-size:12px;color:var(--mut);text-align:center;margin-top:12px}
+.pr{display:flex;align-items:center;gap:12px}
+.av{width:52px;height:52px;border-radius:50%;background:var(--hero);color:#fff;display:grid;place-items:center;font-size:22px;font-weight:700}
+button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.st{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+.st div{background:var(--chip);border-radius:14px;padding:8px 4px;text-align:center;font-size:12px;color:var(--mut)}
+.st b{display:block;font-size:15px;color:var(--ink)}
+@media (max-width:480px){.hero{padding:16px;gap:12px}.ring{width:92px;height:92px}.ring .c{font-size:18px}.hl .big{font-size:23px}.wrap{padding-left:78px;padding-right:12px}}
+</style>
+</head>
+<body>
+
+<div id="auth" class="auth" hidden>
+  <div class="seg lang" data-lg><button data-lang="en">English</button><button data-lang="bn">বাংলা</button></div>
+  <div class="au">
+    <div class="logo">💸</div>
+    <h1 data-t="app"></h1>
+    <p class="s" data-t="tag"></p>
+    <div class="box">
+      <div class="seg" style="margin-bottom:14px"><button id="mi" data-t="login"></button><button id="mu" data-t="signup"></button></div>
+      <input class="f" id="an" data-p="name" autocomplete="name" maxlength="40">
+      <input class="f" id="ae" data-p="email" type="email" autocomplete="email">
+      <input class="f" id="ac" data-p="rcode" autocomplete="off" maxlength="12" hidden>
+      <input class="f" id="ap" data-p="pw" type="password" autocomplete="current-password">
+      <input class="f" id="a2" data-p="pw2" type="password" autocomplete="new-password">
+      <div class="err" id="ar"></div>
+      <button class="btn" id="as"></button>
+      <button class="btn g" id="fl" data-t="forgot" style="margin-top:8px"></button>
+      <button class="btn d" id="ax" data-t="noCode" hidden></button>
+      <div class="nt" data-t="local"></div>
+    </div>
+  </div>
+</div>
+
+<div id="app" hidden>
+<div class="wrap">
+  <div id="v-home">
+    <div class="top">
+      <h1 style="display:flex;align-items:center;gap:10px"><span class="av" id="ha" style="width:40px;height:40px;font-size:17px;flex:none"></span><span><small id="hi"></small><span data-t="app"></span></span></h1>
+      <div class="mn"><button id="pv" aria-label="‹">‹</button><span id="ml"></span><button id="nx" aria-label="›">›</button></div>
+    </div>
+    <div class="hero">
+      <div class="ring">
+        <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="12"/><circle id="rg" cx="60" cy="60" r="50" fill="none" stroke="#F2A93B" stroke-width="12" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="314.16" style="transition:stroke-dashoffset .6s ease,stroke .3s"/></svg>
+        <div class="c"><span id="pc"></span><small data-t="bdg"></small></div>
+      </div>
+      <div class="hl">
+        <div class="lb" data-t="spent"></div>
+        <p class="big" id="tt"></p>
+        <div class="row"><span><span data-t="bdg"></span> <b id="bd"></b></span><span id="rm"></span></div>
+        <button id="eb" data-t="editB"></button>
+      </div>
+    </div>
+    <div class="sec"><h2 data-t="sumT"></h2><div class="box" id="sum"></div></div>
+    <div class="sec"><h2 data-t="where"></h2><div class="cats" id="cats"></div></div>
+    <div class="sec"><h2 data-t="txs"></h2><div id="list"></div></div>
+  </div>
+
+  <div id="v-act" hidden>
+    <div class="top"><h1 data-t="actT"></h1></div>
+    <div id="alist"></div>
+  </div>
+
+  <div id="v-set" hidden>
+    <div class="top"><h1 data-t="setT"></h1></div>
+    <div class="box"><div class="pr"><div class="av" id="sa"></div><div><b id="sn"></b><div id="se" style="color:var(--mut);font-size:13px"></div></div></div><div style="display:flex;gap:8px;margin-top:12px"><button class="chip" id="avb" data-t="chPh"></button><button class="chip" id="avr" data-t="rmPh"></button></div><input type="file" id="avf" accept="image/*" hidden><div class="err" id="ie"></div></div>
+    <div class="box"><h3 data-t="lang"></h3><div class="seg" data-lg><button data-lang="en">English</button><button data-lang="bn">বাংলা</button></div></div>
+    <div class="box"><h3 data-t="theme"></h3><div class="seg" id="thm"><button data-th="auto" data-t="tA"></button><button data-th="light" data-t="tL"></button><button data-th="dark" data-t="tD"></button></div></div>
+    <div class="box"><h3 data-t="mBud"></h3><button class="btn" id="sb2"></button></div>
+    <div class="box"><h3 data-t="rcT"></h3><div id="rcs" style="font-size:13px;color:var(--mut);margin-bottom:10px"></div><button class="btn" id="rcb" data-t="rcNew"></button></div>
+    <div class="box"><h3 data-t="chPw"></h3>
+      <input class="f" id="cp" type="password" data-p="curPw" autocomplete="current-password">
+      <input class="f" id="np" type="password" data-p="newPw" autocomplete="new-password">
+      <div class="err" id="pe"></div>
+      <button class="btn" id="pb" data-t="upd"></button>
+    </div>
+    <button class="btn g" id="lo" data-t="logout" style="border:1px solid var(--line)"></button>
+    <button class="btn d" id="rs" data-t="reset"></button>
+    <button class="btn d" id="da" data-t="delAcc"></button>
+  </div>
+</div>
+<button class="fab" id="add" data-t="addB"></button>
+<div class="nav"><div>
+  <button data-go="home"><span>🏠</span><em data-t="nHome" style="font-style:normal"></em></button>
+  <button data-go="act"><span>🕘</span><em data-t="nAct" style="font-style:normal"></em></button>
+  <button data-go="set"><span>⚙️</span><em data-t="nSet" style="font-style:normal"></em></button>
+</div></div>
+</div>
+
+<div class="ov" id="o1"><div class="sh">
+  <h3 data-t="newE"></h3>
+  <div class="seg" id="tys" style="margin-bottom:14px"></div>
+  <div class="amt">৳<input id="am" type="text" inputmode="decimal" placeholder="0" autocomplete="off"></div>
+  <div class="chips" id="chips"></div>
+  <div class="chips" id="subs" hidden></div>
+  <div id="acl" style="font-size:12.5px;color:var(--mut);margin-bottom:6px"></div>
+  <div class="chips" id="accs"></div>
+  <input class="f" id="nt" data-p="note" maxlength="60">
+  <input class="f" id="dt" type="date">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><button class="chip" id="pbt" type="button" data-t="photo"></button><img id="ppv" alt="" hidden style="width:44px;height:44px;border-radius:10px;object-fit:cover"><button class="chip" id="prm" type="button" hidden data-t="rmv"></button></div>
+  <input type="file" id="pfi" accept="image/*" hidden>
+  <div class="err" id="er"></div>
+  <button class="btn" id="sv" data-t="save"></button>
+  <button class="btn g" data-close data-t="cancel"></button>
+</div></div>
+<div class="ov" id="o2"><div class="sh">
+  <h3 data-t="mBud"></h3>
+  <div class="amt">৳<input id="bi" type="text" inputmode="numeric" autocomplete="off"></div>
+  <button class="btn" id="sb" data-t="save"></button>
+  <button class="btn g" data-close data-t="cancel"></button>
+</div></div>
+<div class="ov" id="o3"><div class="sh">
+  <h3 id="cq"></h3>
+  <button class="btn r" id="cy" data-t="yes"></button>
+  <button class="btn g" data-close data-t="cancel"></button>
+</div></div>
+
+<div class="ov" id="o5"><div class="sh"><h3 data-t="rcT"></h3><p data-t="rcD" style="font-size:14px;color:var(--mut);margin:0 0 14px"></p><div class="amt" id="rcv" style="font-size:30px;letter-spacing:3px;justify-content:center;user-select:all"></div><button class="btn" data-close data-t="saved"></button></div></div>
+<div class="ov" id="o4" style="align-items:center"><img id="vim" alt="" style="max-width:94vw;max-height:84vh;border-radius:16px"></div>
+
+<script>
+var T={en:{app:'My Expenses',tag:'Track every taka',login:'Log in',signup:'Sign up',name:'Full name',email:'Email',pw:'Password',pw2:'Confirm password',local:'Your account is stored only on this device.',
+e_name:'Enter your name',e_email:'Enter a valid email',e_pw:'Password needs at least 6 characters',e_match:'Passwords do not match',e_exists:'An account with this email already exists',e_bad:'Wrong email or password',e_amt:'Enter an amount, for example 250',e_c:'Secure login is not available in this browser',
+photo:'📷 Add photo',rmv:'Remove',chPh:'Change photo',rmPh:'Remove photo',e_img:'Could not use this image',a_photo:'Profile photo changed',nHome:'Home',nAct:'Activity',nSet:'Settings',hi:'Hi, ',spent:'Spent this month',bdg:'Budget',left:'Left ',over:'Over by ',editB:'Change budget',where:'Where it went',txs:'Transactions',
+noCat:'No expenses this month yet',noTx:'No transactions yet.<br>Tap the button below to add your first expense.',newE:'New entry',note:'What for? (optional)',save:'Save',cancel:'Cancel',addB:'＋ Add',ty_exp:'Expense',ty_inc:'Income',ty_sav:'Savings',ty_snt:'Sent',ac_cash:'Cash (in hand)',ac_bank:'Bank',ac_mfs:'Mobile banking',accIn:'Received in',accOut:'Paid from',noteS:'Sent to whom / where?',sumT:'This month & balances',totSav:'Total savings',a_addx:'Added',a_delx:'Deleted',
+actT:'Activity',actE:'Nothing here yet. Your actions will show up in this list.',a_signup:'Account created',a_login:'Logged in',a_logout:'Logged out',a_add:'Added expense',a_del:'Deleted expense',a_budget:'Budget set to',a_lang:'Language changed',a_theme:'Theme changed',a_pw:'Password changed',a_reset:'All data cleared',
+setT:'Settings',lang:'Language',theme:'Theme',tA:'Auto',tL:'Light',tD:'Dark',mBud:'Monthly budget',chPw:'Change password',curPw:'Current password',newPw:'New password',upd:'Update password',pwOk:'Password updated',forgot:'Forgot password?',doReset:'Reset password',rcode:'Recovery code (XXXX-XXXX)',noCode:'No code? Erase data and reset',rcT:'Recovery code',rcD:'Write this code down or take a screenshot. You will need it to reset a forgotten password. It is shown only once.',saved:'I have saved it',rcNew:'Generate new recovery code',rcOn:'A recovery code is set. Generating a new one replaces the old one.',rcOff:'No recovery code yet. Generate one so you can reset a forgotten password.',e_rc:'Recovery code is wrong',e_norc:'This account has no recovery code. Use the erase option below.',e_nouser:'No account with this email',qW:'This will permanently erase all data of this account and set the new password. Continue?',a_rc:'Recovery code generated',logout:'Log out',reset:'Clear all expenses and activity',delAcc:'Delete account',yes:'Yes, continue',qR:'Clear all your expenses and activity?',qD:'Delete this account and all its data?',
+s:{bf:'Breakfast',ln:'Lunch',sn:'Snacks',dn:'Dinner',el:'Electricity',gs:'Gas',wt:'Water',nt:'Internet',ph:'Phone',rt:'Rent',bu:'Maid (Bua)',mb:'Metro bill',bus:'Bus',metro:'Metro',rickshaw:'Rickshaw',cng:'CNG',train:'Train',othermove:'Other transport'},c:{sal:'Salary',biz:'Business',frl:'Freelance',gft:'Gift',io:'Other income',food:'Food',bazar:'Groceries',move:'Transport',bill:'Bills',fun:'Fun',health:'Health',shop:'Shopping',other:'Other'}},
+bn:{app:'আমার খরচ',tag:'প্রতিটি টাকার হিসাব রাখুন',login:'লগ ইন',signup:'সাইন আপ',name:'পুরো নাম',email:'ইমেইল',pw:'পাসওয়ার্ড',pw2:'পাসওয়ার্ড আবার লিখুন',local:'আপনার অ্যাকাউন্ট শুধু এই ডিভাইসে সংরক্ষিত থাকে।',
+e_name:'আপনার নাম লিখুন',e_email:'সঠিক ইমেইল লিখুন',e_pw:'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে',e_match:'পাসওয়ার্ড মিলছে না',e_exists:'এই ইমেইলে আগেই অ্যাকাউন্ট আছে',e_bad:'ইমেইল বা পাসওয়ার্ড ভুল',e_amt:'পরিমাণ লিখুন, যেমন ২৫০',e_c:'এই ব্রাউজারে নিরাপদ লগ ইন চালু নেই',
+photo:'📷 ছবি যোগ করুন',rmv:'সরান',chPh:'ছবি বদলান',rmPh:'ছবি সরান',e_img:'এই ছবিটি ব্যবহার করা গেল না',a_photo:'প্রোফাইল ছবি বদলেছেন',nHome:'হোম',nAct:'অ্যাক্টিভিটি',nSet:'সেটিংস',hi:'হ্যালো, ',spent:'এই মাসে খরচ',bdg:'বাজেট',left:'বাকি ',over:'বেশি ',editB:'বাজেট বদলান',where:'কোথায় কত গেল',txs:'লেনদেন',
+noCat:'এই মাসে এখনও কোনো খরচ নেই',noTx:'কোনো লেনদেন নেই।<br>নিচের বোতামে চেপে প্রথম খরচটি যোগ করুন।',newE:'নতুন এন্ট্রি',note:'কীসের জন্য? (ঐচ্ছিক)',save:'সংরক্ষণ করুন',cancel:'বাতিল',addB:'＋ যোগ করুন',ty_exp:'খরচ',ty_inc:'আয়',ty_sav:'সঞ্চয়',ty_snt:'পাঠালাম',ac_cash:'ক্যাশ (হাতে নগদ)',ac_bank:'ব্যাংক',ac_mfs:'মোবাইল ব্যাংকিং',accIn:'যেখানে পেলাম',accOut:'যেখান থেকে দিলাম',noteS:'কাকে / কোথায় পাঠালেন?',sumT:'এই মাসের হিসাব ও ব্যালেন্স',totSav:'মোট সঞ্চয়',a_addx:'যোগ করেছেন',a_delx:'মুছেছেন',
+actT:'অ্যাক্টিভিটি',actE:'এখনও কিছু নেই। আপনার কাজগুলো এখানে দেখা যাবে।',a_signup:'অ্যাকাউন্ট খোলা হয়েছে',a_login:'লগ ইন করেছেন',a_logout:'লগ আউট করেছেন',a_add:'খরচ যোগ করেছেন',a_del:'খরচ মুছেছেন',a_budget:'বাজেট ঠিক করেছেন',a_lang:'ভাষা বদলেছেন',a_theme:'থিম বদলেছেন',a_pw:'পাসওয়ার্ড বদলেছেন',a_reset:'সব ডেটা মুছেছেন',
+setT:'সেটিংস',lang:'ভাষা',theme:'থিম',tA:'অটো',tL:'লাইট',tD:'ডার্ক',mBud:'মাসিক বাজেট',chPw:'পাসওয়ার্ড বদলান',curPw:'বর্তমান পাসওয়ার্ড',newPw:'নতুন পাসওয়ার্ড',upd:'পাসওয়ার্ড আপডেট করুন',pwOk:'পাসওয়ার্ড আপডেট হয়েছে',forgot:'পাসওয়ার্ড ভুলে গেছেন?',doReset:'পাসওয়ার্ড রিসেট করুন',rcode:'রিকভারি কোড (XXXX-XXXX)',noCode:'কোড নেই? ডেটা মুছে রিসেট করুন',rcT:'রিকভারি কোড',rcD:'এই কোডটি লিখে রাখুন বা স্ক্রিনশট নিন। পাসওয়ার্ড ভুলে গেলে রিসেট করতে এটি লাগবে। কোডটি শুধু এবারই দেখানো হবে।',saved:'আমি সংরক্ষণ করেছি',rcNew:'নতুন রিকভারি কোড তৈরি করুন',rcOn:'রিকভারি কোড সেট করা আছে। নতুন কোড বানালে আগেরটি আর কাজ করবে না।',rcOff:'এখনও রিকভারি কোড নেই। ভুলে যাওয়া পাসওয়ার্ড রিসেট করতে একটি তৈরি করে রাখুন।',e_rc:'রিকভারি কোড ঠিক নয়',e_norc:'এই অ্যাকাউন্টে রিকভারি কোড নেই। নিচের মুছে-রিসেট অপশন ব্যবহার করুন।',e_nouser:'এই ইমেইলে কোনো অ্যাকাউন্ট নেই',qW:'এতে এই অ্যাকাউন্টের সব ডেটা চিরতরে মুছে যাবে এবং নতুন পাসওয়ার্ড বসবে। এগিয়ে যাবেন?',a_rc:'রিকভারি কোড তৈরি করেছেন',logout:'লগ আউট',reset:'সব খরচ ও অ্যাক্টিভিটি মুছুন',delAcc:'অ্যাকাউন্ট মুছুন',yes:'হ্যাঁ, এগিয়ে যান',qR:'আপনার সব খরচ ও অ্যাক্টিভিটি মুছে ফেলবেন?',qD:'এই অ্যাকাউন্ট ও এর সব ডেটা মুছে ফেলবেন?',
+s:{bf:'সকালের নাস্তা',ln:'দুপুরের খাবার',sn:'বিকেলের নাস্তা',dn:'রাতের খাবার',el:'বিদ্যুৎ',gs:'গ্যাস',wt:'পানি',nt:'ইন্টারনেট',ph:'মোবাইল',rt:'বাসা ভাড়া',bu:'বুয়ার বিল',mb:'মেট্রো বিল',bus:'বাস',metro:'মেট্রো',rickshaw:'রিকশা',cng:'সিএনজি',train:'ট্রেন',othermove:'অন্যান্য যাতায়াত'},c:{sal:'বেতন',biz:'ব্যবসা',frl:'ফ্রিল্যান্স',gft:'উপহার',io:'অন্যান্য আয়',food:'খাবার',bazar:'বাজার',move:'যাতায়াত',bill:'বিল',fun:'বিনোদন',health:'স্বাস্থ্য',shop:'শপিং',other:'অন্যান্য'}}};
+var CATS=[['food','🍛','#E8553D'],['bazar','🛒','#2E9E73'],['move','🚌','#3B82C4'],['bill','💡','#F2A93B'],['fun','🎬','#8B5CF6'],['health','💊','#D6457A'],['shop','🛍️','#14A3A3'],['other','📦','#7A8A86']];
+var ICATS=[['sal','💼','#2E9E73'],['biz','🏪','#3B82C4'],['frl','💻','#8B5CF6'],['gft','🎁','#D6457A'],['io','📦','#7A8A86']],ACC=[['cash','💵'],['bank','🏦'],['mfs','📱']],typ='exp',isel='sal',acc='cash';
+function ty(i){return i.type||'exp'}
+var KI={rc:'🔑',addx:'➕',delx:'🗑️',signup:'🎉',login:'🔑',logout:'🚪',add:'➕',del:'🗑️',budget:'🎯',lang:'🌐',theme:'🎨',pw:'🔒',reset:'🧹',photo:'🖼️'};
+function ld(k,d){try{var r=localStorage.getItem(k);return r?JSON.parse(r):d}catch(e){return d}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+var $=function(i){return document.getElementById(i)};
+var P=ld('kh_pref',{lang:'bn',theme:'auto'}),users=ld('kh_users',{}),me=ld('kh_sess',null),D=null,mode='in',tab='home',sel='food',cf=null;
+var cur=new Date();cur.setDate(1);
+function t(k){return T[P.lang][k]||k}
+function loc(){return P.lang==='bn'?'bn-BD':'en-US'}
+function bn(n){return Math.round(n).toLocaleString(loc())}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function num(v){var m='০১২৩৪৫৬৭৮৯';v=String(v).replace(/[০-৯]/g,function(d){return m.indexOf(d)}).replace(/[,\s]/g,'');return parseFloat(v)}
+function ym(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
+function today(){var d=new Date();return ym(d)+'-'+String(d.getDate()).padStart(2,'0')}
+function cn(k){return T[P.lang].c[k]||T[P.lang].c.other}
+var SM={food:['bf','ln','sn','dn'],bill:['el','gs','wt','nt','ph','rt','bu','mb'],move:['bus','metro','rickshaw','cng','train','othermove']},ssel='bf';
+function sbn(k){return (T[P.lang].s||{})[k]||''}
+function ci(k){return CATS.concat(ICATS).filter(function(c){return c[0]===k})[0]||CATS[7]}
+function saveD(){sv('kh_d_'+me,D)}
+var pend=null,AV=null;
+function idb(){return new Promise(function(res,rej){var r=indexedDB.open('kh_img',1);r.onupgradeneeded=function(){r.result.createObjectStore('i')};r.onsuccess=function(){res(r.result)};r.onerror=function(){rej(r.error)}})}
+function ip(k,v){return idb().then(function(d){return new Promise(function(res,rej){var tx=d.transaction('i','readwrite');if(v===null)tx.objectStore('i').delete(k);else tx.objectStore('i').put(v,k);tx.oncomplete=res;tx.onerror=rej})})}
+function ig(k){return idb().then(function(d){return new Promise(function(res,rej){var q=d.transaction('i').objectStore('i').get(k);q.onsuccess=function(){res(q.result)};q.onerror=rej})})}
+function shrink(file,max){return new Promise(function(res,rej){var u=URL.createObjectURL(file),im=new Image();im.onload=function(){var s=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL('image/jpeg',.72))};im.onerror=rej;im.src=u})}
+function lg(k,o){o=o||{};o.t=Date.now();o.k=k;D.log.unshift(o);D.log=D.log.slice(0,150)}
+async function hp(pw,salt){var k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveBits']);var b=await crypto.subtle.deriveBits({name:'PBKDF2',salt:new TextEncoder().encode(salt),iterations:100000,hash:'SHA-256'},k,256);return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')}
+function salt(){var a=new Uint8Array(12);crypto.getRandomValues(a);return Array.from(a).map(function(x){return x.toString(16)}).join('')}
+
+function applyTheme(){var r=document.documentElement;if(P.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',P.theme)}
+function applyLang(){
+  document.documentElement.lang=P.lang;
+  document.querySelectorAll('[data-t]').forEach(function(e){e.innerHTML=t(e.getAttribute('data-t'))});
+  document.querySelectorAll('[data-p]').forEach(function(e){e.placeholder=t(e.getAttribute('data-p'))});
+  document.querySelectorAll('[data-lang]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-lang')===P.lang)});
+  $('as').textContent=t(mode==='in'?'login':mode==='up'?'signup':'doReset');
+  $('mi').classList.toggle('on',mode==='in');$('mu').classList.toggle('on',mode==='up');
+  $('an').hidden=mode!=='up';$('a2').hidden=mode==='in';$('ac').hidden=$('ax').hidden=mode!=='fp';$('fl').hidden=mode!=='in';$('ap').placeholder=t(mode==='fp'?'newPw':'pw');
+  $('ap').autocomplete=mode==='in'?'current-password':'new-password';
+  if(me&&D)render();
+}
+function showAuth(){$('app').hidden=true;$('auth').hidden=false;$('ar').textContent='';applyLang()}
+function enter(){AV=null;ig(me+':avatar').then(function(u){AV=u||null;render()}).catch(function(){});$('auth').hidden=true;$('app').hidden=false;go('home');applyLang()}
+function go(x){
+  tab=x;['home','act','set'].forEach(function(k){$('v-'+k).hidden=k!==x});
+  document.querySelectorAll('[data-go]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-go')===x)});
+  $('add').hidden=x!=='home';window.scrollTo(0,0);
+}
+function render(){
+  var u=users[me]||{name:''};
+  $('hi').textContent=t('hi')+u.name;
+  var m=ym(cur);
+  $('ml').textContent=cur.toLocaleDateString(loc(),{month:'long',year:'numeric'});
+  var its=D.items.filter(function(i){return i.date.indexOf(m)===0}).sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:b.id-a.id});
+  var ex=its.filter(function(i){return ty(i)==='exp'}),tot=ex.reduce(function(s,i){return s+i.amt},0),pct=D.budget>0?tot/D.budget:0;
+  $('tt').textContent='৳'+bn(tot);$('bd').textContent='৳'+bn(D.budget);
+  $('pc').textContent=bn(Math.min(pct,9.99)*100)+'%';
+  var left=D.budget-tot;
+  $('rm').textContent=left>=0?t('left')+'৳'+bn(left):t('over')+'৳'+bn(-left);
+  var rg=$('rg');rg.style.strokeDashoffset=314.16*(1-Math.min(pct,1));
+  rg.style.stroke=pct>1?'#FF7A66':pct>.8?'#F2A93B':'#7DE0B5';
+  var by={};ex.forEach(function(i){by[i.cat]=(by[i.cat]||0)+i.amt});
+  var bs={};ex.forEach(function(i){if(i.sub)bs[i.sub]=(bs[i.sub]||0)+i.amt});function stx(ck){var sk=(SM[ck]||[]).filter(function(s){return bs[s]});var detail=sk.length?'<div style="font-size:12px;color:var(--mut);margin-top:5px">'+sk.map(function(s){return sbn(s)+' ৳'+bn(bs[s])}).join(' · ')+'</div>':'';return ck==='move'?'<div style="font-size:12px;font-weight:600;color:var(--ink);margin-top:5px">'+(P.lang==='bn'?'মোট যাতায়াত':'Total transport')+': ৳'+bn(by.move||0)+'</div>'+detail:detail}
+  var rows=CATS.filter(function(c){return by[c[0]]}).sort(function(a,b){return by[b[0]]-by[a[0]]});
+  $('cats').innerHTML=rows.length?rows.map(function(c){
+    return '<div class="cr"><div class="ic" style="background:'+c[2]+'22">'+c[1]+'</div><div class="cm"><div class="n"><span>'+cn(c[0])+'</span><b>৳'+bn(by[c[0]])+'</b></div><div class="bar"><i style="width:'+(tot?by[c[0]]/tot*100:0)+'%;background:'+c[2]+'"></i></div>'+stx(c[0])+'</div></div>'
+  }).join(''):'<div class="cr" style="color:var(--mut);font-size:14px">'+t('noCat')+'</div>';
+  var s3={inc:0,sav:0,snt:0},AB={cash:0,bank:0,mfs:0},TS=0;
+  its.forEach(function(i){var y=ty(i);if(s3[y]!=null)s3[y]+=i.amt});
+  D.items.forEach(function(i){var y=ty(i),a=i.acct||'cash';AB[a]=(AB[a]||0)+(y==='inc'?i.amt:-i.amt);if(y==='sav')TS+=i.amt});
+  $('sum').innerHTML='<div class="st">'+[['inc','💰'],['sav','🐷'],['snt','📤']].map(function(k){return '<div>'+k[1]+' '+t('ty_'+k[0])+'<b>৳'+bn(s3[k[0]])+'</b></div>'}).join('')+'</div>'+ACC.map(function(a){return '<div class="cr"><div class="ic" style="background:var(--chip)">'+a[1]+'</div><div class="cm"><div class="n"><span>'+t('ac_'+a[0])+'</span><b>৳'+bn(AB[a[0]])+'</b></div></div></div>'}).join('')+'<div class="cr"><div class="ic" style="background:#2E9E7322">🐷</div><div class="cm"><div class="n"><span>'+t('totSav')+'</span><b>৳'+bn(TS)+'</b></div></div></div>';
+  var h='',last='';
+  its.forEach(function(i){
+    if(i.date!==last){last=i.date;var ds=its.filter(function(x){return x.date===i.date&&ty(x)==='exp'}).reduce(function(s,x){return s+x.amt},0);
+      h+='<div class="day"><span>'+new Date(i.date+'T00:00:00').toLocaleDateString(loc(),{weekday:'long',day:'numeric',month:'short'})+'</span><span>'+(ds?'৳'+bn(ds):'')+'</span></div>'}
+    var y=ty(i),c=y==='sav'?['sv','🐷','#2E9E73']:y==='snt'?['sn','📤','#3B82C4']:ci(i.cat),lb=(y==='exp'||y==='inc')?cn(i.cat):t('ty_'+y);
+    var l2=[y==='exp'?'':t('ty_'+y),(y==='exp'||y==='inc')?cn(i.cat):'',i.sub?sbn(i.sub):'',t('ac_'+(i.acct||'cash'))].filter(Boolean).join(' · ');
+    h+='<div class="it"><div class="ic" style="background:'+c[2]+'22">'+c[1]+'</div><div class="t"><div>'+esc(i.note||(i.sub?sbn(i.sub):lb))+'</div><div>'+esc(l2)+'</div></div><div class="a"'+(y==='inc'?' style="color:#2E9E73"':'')+'>'+(y==='inc'?'+':'')+'৳'+bn(i.amt)+'</div>'+(i.img?'<button class="x" data-img="'+i.id+'" aria-label="photo">🖼️</button>':'')+'<button class="x" data-del="'+i.id+'" aria-label="×">×</button></div>';
+  });
+  $('list').innerHTML=h||'<div class="empty">'+t('noTx')+'</div>';
+  var ah='',al='';
+  D.log.forEach(function(e){
+    var d=new Date(e.t),dk=d.toDateString();
+    if(dk!==al){al=dk;ah+='<div class="day"><span>'+d.toLocaleDateString(loc(),{weekday:'long',day:'numeric',month:'short'})+'</span></div>'}
+    var det=e.a!=null?' ৳'+bn(e.a):'';if(e.c)det+=' · '+cn(e.c);if(e.s)det+=' · '+sbn(e.s);if(e.v)det+=' '+e.v;
+    ah+='<div class="it"><div class="ic" style="background:var(--chip)">'+KI[e.k]+'</div><div class="t"><div>'+t('a_'+e.k)+esc(det)+'</div><div>'+d.toLocaleTimeString(loc(),{hour:'2-digit',minute:'2-digit'})+'</div></div></div>';
+  });
+  $('alist').innerHTML=ah||'<div class="empty">'+t('actE')+'</div>';
+  $('sn').textContent=u.name;$('rcs').textContent=t(u.rh?'rcOn':'rcOff');$('se').textContent=me;var ph=AV?'center/cover no-repeat url('+AV+')':'';['sa','ha'].forEach(function(k){var e=$(k);e.textContent=AV?'':(u.name||'?').charAt(0).toUpperCase();e.style.background=ph});$('avr').hidden=!AV;
+  $('sb2').textContent='৳'+bn(D.budget);
+  document.querySelectorAll('[data-th]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-th')===P.theme)});
+}
+function chips(){
+  var sb=$('subs'),sl=typ==='exp'?(SM[sel]||[]):[];sb.hidden=!sl.length;
+  sb.innerHTML=sl.map(function(x){return '<button class="chip'+(x===ssel?' on':'')+'" data-s="'+x+'">'+sbn(x)+'</button>'}).join('');
+  var cl=typ==='exp'?CATS:typ==='inc'?ICATS:[],cs=typ==='inc'?isel:sel;
+  $('chips').hidden=!cl.length;
+  $('chips').innerHTML=cl.map(function(c){return '<button class="chip'+(c[0]===cs?' on':'')+'" data-c="'+c[0]+'">'+c[1]+' '+cn(c[0])+'</button>'}).join('');
+  $('tys').innerHTML=['exp','inc','sav','snt'].map(function(k){return '<button class="'+(k===typ?'on':'')+'" data-ty="'+k+'">'+t('ty_'+k)+'</button>'}).join('');
+  $('acl').textContent=t(typ==='inc'?'accIn':'accOut');
+  $('accs').innerHTML=ACC.map(function(a){return '<button class="chip'+(a[0]===acc?' on':'')+'" data-a="'+a[0]+'">'+a[1]+' '+t('ac_'+a[0])+'</button>'}).join('');
+  $('nt').placeholder=t(typ==='snt'?'noteS':'note');
+}
+function open(id){$(id).classList.add('on')}
+function closeAll(){document.querySelectorAll('.ov').forEach(function(o){o.classList.remove('on')})}
+function ask(q,fn){$('cq').textContent=q;cf=fn;open('o3')}
+function logout(){if(D){lg('logout');saveD()}me=null;D=null;sv('kh_sess',null);showAuth()}
+
+function rcn(v){return String(v).toUpperCase().replace(/[^A-Z0-9]/g,'')}
+async function setRc(em){var a=new Uint8Array(8),A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',c='';crypto.getRandomValues(a);a.forEach(function(x){c+=A[x%32]});c=c.slice(0,4)+'-'+c.slice(4);var s=salt();users[em].rs=s;users[em].rh=await hp(rcn(c),s);sv('kh_users',users);return c}
+function showRc(c){$('rcv').textContent=c;open('o5')}
+async function resetPw(em,code,wipe){
+  var er=$('ar'),pw=$('ap').value,u=users[em];
+  if(!u){er.textContent=t('e_nouser');return}
+  if(pw.length<6){er.textContent=t('e_pw');return}
+  if(pw!==$('a2').value){er.textContent=t('e_match');return}
+  if(!wipe&&(!u.rh||await hp(rcn(code),u.rs)!==u.rh)){er.textContent=t(u.rh?'e_rc':'e_norc');return}
+  u.salt=salt();u.hash=await hp(pw,u.salt);
+  if(wipe){var d=ld('kh_d_'+em,null);if(d&&d.items)d.items.forEach(function(i){if(i.img)ip(em+':'+i.id,null).catch(function(){})});ip(em+':avatar',null).catch(function(){});try{localStorage.removeItem('kh_d_'+em)}catch(e){}delete u.rh;delete u.rs}
+  sv('kh_users',users);$('ap').value=$('a2').value=$('ac').value='';mode='in';applyLang();er.className='err ok';er.textContent=t('pwOk');
+}
+$('fl').onclick=function(){mode='fp';$('ar').textContent='';applyLang()};
+$('ax').onclick=function(){var em=$('ae').value.trim().toLowerCase(),er=$('ar');er.className='err';er.textContent='';if(!users[em]){er.textContent=t('e_nouser');return}if($('ap').value.length<6){er.textContent=t('e_pw');return}if($('ap').value!==$('a2').value){er.textContent=t('e_match');return}ask(t('qW'),function(){resetPw(em,'',true).catch(function(){er.textContent=t('e_c')})})};
+$('rcb').onclick=async function(){try{var c=await setRc(me);lg('rc');saveD();render();showRc(c)}catch(e){}};
+$('mi').onclick=function(){mode='in';$('ar').textContent='';applyLang()};
+$('mu').onclick=function(){mode='up';$('ar').textContent='';applyLang()};
+$('as').onclick=async function(){
+  var em=$('ae').value.trim().toLowerCase(),pw=$('ap').value,nm=$('an').value.trim(),er=$('ar');er.className='err';er.textContent='';
+  if(!/^\S+@\S+\.\S+$/.test(em)){er.textContent=t('e_email');return}
+  if(!window.crypto||!crypto.subtle){er.textContent=t('e_c');return}
+  try{
+    if(mode==='fp'){await resetPw(em,$('ac').value,false);return}
+    if(mode==='up'){
+      if(!nm){er.textContent=t('e_name');return}
+      if(pw.length<6){er.textContent=t('e_pw');return}
+      if(pw!==$('a2').value){er.textContent=t('e_match');return}
+      if(users[em]){er.textContent=t('e_exists');return}
+      var s=salt();users[em]={name:nm,salt:s,hash:await hp(pw,s)};sv('kh_users',users);var rcode=await setRc(em);
+      var old=Object.keys(users).length===1?ld('khoroch_v1',null):null;
+      me=em;D=old&&old.items?{items:old.items,budget:old.budget||20000,log:[]}:{items:[],budget:20000,log:[]};
+      lg('signup');
+    }else{
+      var u=users[em];
+      if(!u||await hp(pw,u.salt)!==u.hash){er.textContent=t('e_bad');return}
+      me=em;D=ld('kh_d_'+em,{items:[],budget:20000,log:[]});lg('login');
+    }
+    sv('kh_sess',me);saveD();$('ap').value=$('a2').value='';enter();if(rcode)showRc(rcode);
+  }catch(e){er.textContent=t('e_c')}
+};
+document.querySelectorAll('[data-lang]').forEach(function(b){b.onclick=function(){
+  var l=b.getAttribute('data-lang');if(l===P.lang)return;P.lang=l;sv('kh_pref',P);
+  if(D){lg('lang',{v:l==='bn'?'বাংলা':'English'});saveD()}applyLang()}});
+document.querySelectorAll('[data-th]').forEach(function(b){b.onclick=function(){
+  P.theme=b.getAttribute('data-th');sv('kh_pref',P);applyTheme();lg('theme',{v:t({auto:'tA',light:'tL',dark:'tD'}[P.theme])});saveD();render()}});
+document.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){go(b.getAttribute('data-go'))}});
+$('pv').onclick=function(){cur.setMonth(cur.getMonth()-1);render()};
+$('nx').onclick=function(){cur.setMonth(cur.getMonth()+1);render()};
+$('add').onclick=function(){$('am').value=$('nt').value='';$('dt').value=today();$('er').textContent='';pend=null;$('ppv').hidden=$('prm').hidden=true;sel='food';typ='exp';isel='sal';acc='cash';var hr=new Date().getHours();ssel=hr<11?'bf':hr<16?'ln':hr<18?'sn':'dn';chips();open('o1');setTimeout(function(){$('am').focus()},50)};
+$('chips').onclick=function(e){var c=e.target.getAttribute('data-c');if(!c)return;if(typ==='inc')isel=c;else{sel=c;ssel=(SM[c]||[''])[0]}chips()};
+$('tys').onclick=function(e){var k=e.target.getAttribute('data-ty');if(k){typ=k;chips()}};
+$('accs').onclick=function(e){var k=e.target.getAttribute('data-a');if(k){acc=k;chips()}};
+$('subs').onclick=function(e){var s=e.target.getAttribute('data-s');if(s){ssel=s;chips()}};
+$('pbt').onclick=function(){$('pfi').click()};
+$('pfi').onchange=function(){var f=this.files[0];this.value='';$('er').textContent='';if(!f)return;shrink(f,1000).then(function(u){pend=u;$('ppv').src=u;$('ppv').hidden=false;$('prm').hidden=false}).catch(function(){$('er').textContent=t('e_img')})};
+$('prm').onclick=function(){pend=null;$('ppv').hidden=true;$('prm').hidden=true};
+$('avb').onclick=function(){$('avf').click()};
+$('avr').onclick=function(){ip(me+':avatar',null).then(function(){AV=null;render()}).catch(function(){})};
+$('avf').onchange=function(){var f=this.files[0];this.value='';$('ie').textContent='';if(!f)return;shrink(f,360).then(function(u){return ip(me+':avatar',u).then(function(){AV=u;lg('photo');saveD();render()})}).catch(function(){$('ie').textContent=t('e_img')})};
+$('sv').onclick=function(){
+  var a=num($('am').value);if(!(a>0)){$('er').textContent=t('e_amt');return}
+  var d=$('dt').value||today();
+  var ni={id:Date.now(),amt:a,type:typ,cat:typ==='exp'?sel:typ==='inc'?isel:'',note:$('nt').value.trim(),date:d,acct:acc};if(typ==='exp'&&SM[sel])ni.sub=ssel;D.items.push(ni);
+  if(pend){ni.img=1;ip(me+':'+ni.id,pend).catch(function(){ni.img=0;saveD();render()})}if(typ==='exp')lg('add',{a:a,c:sel,s:ni.sub});else lg('addx',{a:a,v:t('ty_'+typ)+(typ==='inc'?' · '+cn(isel):'')});saveD();
+  var dd=new Date(d+'T00:00:00');cur=new Date(dd.getFullYear(),dd.getMonth(),1);closeAll();render();
+};
+$('list').onclick=function(e){
+  var im=e.target.getAttribute('data-img');if(im){ig(me+':'+im).then(function(u){if(u){$('vim').src=u;open('o4')}}).catch(function(){});return}var id=e.target.getAttribute('data-del');if(!id)return;
+  var it=D.items.filter(function(i){return String(i.id)===id})[0];
+  D.items=D.items.filter(function(i){return String(i.id)!==id});
+  if(it&&it.img)ip(me+':'+it.id,null).catch(function(){});if(it){if(ty(it)==='exp')lg('del',{a:it.amt,c:it.cat,s:it.sub});else lg('delx',{a:it.amt,v:t('ty_'+ty(it))})}saveD();render();
+};
+function eb(){$('bi').value=D.budget;open('o2');setTimeout(function(){$('bi').focus()},50)}
+$('eb').onclick=eb;$('sb2').onclick=eb;
+$('sb').onclick=function(){var b=num($('bi').value);if(b>=0){D.budget=b;lg('budget',{a:b});saveD();closeAll();render()}};
+$('pb').onclick=async function(){
+  var pe=$('pe'),u=users[me];pe.className='err';pe.textContent='';
+  try{
+    if(await hp($('cp').value,u.salt)!==u.hash){pe.textContent=t('e_bad');return}
+    if($('np').value.length<6){pe.textContent=t('e_pw');return}
+    u.salt=salt();u.hash=await hp($('np').value,u.salt);sv('kh_users',users);
+    lg('pw');saveD();$('cp').value=$('np').value='';pe.className='err ok';pe.textContent=t('pwOk');render();
+  }catch(e){pe.textContent=t('e_c')}
+};
+$('lo').onclick=logout;
+$('rs').onclick=function(){ask(t('qR'),function(){D.items.forEach(function(i){if(i.img)ip(me+':'+i.id,null).catch(function(){})});D.items=[];D.log=[];lg('reset');saveD();render()})};
+$('da').onclick=function(){ask(t('qD'),function(){D.items.forEach(function(i){if(i.img)ip(me+':'+i.id,null).catch(function(){})});ip(me+':avatar',null).catch(function(){});var m=me;delete users[m];sv('kh_users',users);try{localStorage.removeItem('kh_d_'+m)}catch(e){}me=null;D=null;sv('kh_sess',null);showAuth()})};
+$('cy').onclick=function(){var f=cf;cf=null;closeAll();if(f)f()};
+document.querySelectorAll('[data-close]').forEach(function(b){b.onclick=closeAll});
+document.querySelectorAll('.ov').forEach(function(o){o.onclick=function(e){if(e.target===o&&o.id!=='o5')closeAll()}});
+
+(function(){try{function ic(n){var c=document.createElement('canvas');c.width=c.height=n;var x=c.getContext('2d');x.fillStyle='#0E3B36';x.fillRect(0,0,n,n);x.font=Math.round(n*.52)+'px sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText('💸',n/2,n*.54);return c.toDataURL('image/png')}
+var a=ic(180),b=ic(192),c5=ic(512);function lk(r,h,s){var l=document.createElement('link');l.rel=r;l.href=h;if(s)l.sizes=s;document.head.appendChild(l)}
+lk('apple-touch-icon',a,'180x180');lk('icon',b,'192x192');
+var m={name:'আমার খরচ · My Expenses',short_name:'আমার খরচ',display:'standalone',background_color:'#EDF2F0',theme_color:'#0E3B36',start_url:location.href.split('#')[0],icons:[{src:b,sizes:'192x192',type:'image/png'},{src:c5,sizes:'512x512',type:'image/png'}]};
+lk('manifest',URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'})))}catch(e){}})();
+applyTheme();
+if(me&&users[me]){D=ld('kh_d_'+me,{items:[],budget:20000,log:[]});enter()}else{me=null;showAuth()}
+</script>
+</body>
+</html>
